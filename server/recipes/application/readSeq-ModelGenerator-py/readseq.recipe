@@ -1,0 +1,46 @@
+Bootstrap: docker
+
+From: ubuntu:18.04
+
+%files
+    dfa-lib-python
+    programs
+
+%environment
+   
+
+%post
+    apt update
+
+    apt-get install -y readseq
+
+    apt install python-pip -y
+
+    pip install read 
+
+    pip install pytest==4.5.0 pytest-arraydiff==0.3  
+
+    cd $SINGULARITY_ROOTFS/liliane/dfa-lib-python
+    
+    python setup.py install
+
+    apt install -y default-jre 
+
+    apt-get install language-pack-en-base -y
+
+    apt install -y raxml
+
+%runscript
+
+    exec "$@"
+
+%setup
+  WORKDIR="$SINGULARITY_ROOTFS/liliane"
+  mkdir -p $WORKDIR
+  if [ ! -x "$WORKDIR" ]; then
+    echo "failed to create tempdir directory..."
+    exit 1
+  fi
+
+  cp -r dfa-lib-python ${SINGULARITY_ROOTFS}/liliane/dfa-lib-python
+  cp -r programs ${SINGULARITY_ROOTFS}/liliane/programs

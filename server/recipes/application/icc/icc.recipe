@@ -1,0 +1,70 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+%files
+  config.cfg /config.cfg
+  #install.sh $SINGULARITY_ROOTFS/liliane/install.sh
+  #rtm_iso2d $SINGULARITY_ROOTFS/liliane/rtm_iso2d
+
+   dfa-lib-cpp $SINGULARITY_ROOTFS/liliane/dfa-lib-cpp
+
+%setup
+  # Commands in the %setup section are executed on the host system outside of the container after 
+  # the base OS has been installed
+
+  #Create a work directory inside the container
+  WORKDIR="$SINGULARITY_ROOTFS/liliane"
+  mkdir -p $WORKDIR
+  if [ ! -x "$WORKDIR" ]; then
+    echo "failed to create tempdir directory..."
+    exit 1
+  fi
+  cp install.sh $WORKDIR/install.sh
+  #cp rtm_iso2d $WORKDIR/rtm_iso2d
+  chmod -R 777 $WORKDIR
+  #. /opt/intel/parallel_studio_xe_2017/bin/psxvars.sh
+  exit 0
+
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WORKDIR/dfa-lib-cpp/lib
+
+%labels
+  AUTHOR lilianeneves8@gmail.com, rodrigo_prado@id.uff.br
+
+%post
+  apt-get update 
+  apt-get -y install python3 
+  apt-get -y install git 
+  apt-get -y install cpio
+  apt-get -y install gcc
+  apt-get install -yq --no-install-recommends wget ca-certificates apt-transport-https
+  apt-get install -y curl 
+  apt-get install -y apt-transport-https 
+  apt-get install -y time 
+  apt-get install -y openssh-client 
+  apt-get install -y openssh-server 
+  apt-get install -y python-dev 
+  apt-get install -y vim 
+  apt-get install -y gnupg
+  apt-get clean 
+  rm /bin/sh
+  ln -s /bin/bash /bin/sh
+  wget -O icc.tgz http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/11542/parallel_studio_xe_2017_update4_composer_edition_for_cpp_online.tgz 
+  tar -xvzf icc.tgz 
+  cd parallel_studio_xe_2017* 
+  bash ./install.sh --silent=/config.cfg
+  cd .. 
+  rm -rf parallel_studio_xe_* icc.tgz 
+  rm /config.cfg
+  
+%environment
+  #source /opt/intel/psxe_runtime_2018.4.274/linux/bin/psxevars.sh
+  source  /opt/intel/parallel_studio_xe_2017/bin/psxevars.sh
+  #. /opt/intel/psxe_runtime/linux/bin/psxevars.sh
+  APPNAME="liliane"
+  WORKDIR=$SINGULARITY_ROOTFS/$APPNAME
+  export APPNAME WORKDIR
+
+%runscript
+  icc --version 
+  "$@"
+  

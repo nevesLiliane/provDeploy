@@ -1,0 +1,48 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+
+%files
+
+    monetdb.list                 /home
+    
+%environment
+    
+  export LC_ALL="en_US.UTF-8"
+  export LANG="en_US.UTF-8"
+
+%post
+	
+  apt-get update && apt-get install -y gnupg2 ca-certificates wget
+  cp /home/monetdb.list /etc/apt/sources.list.d
+  wget --output-document=/etc/apt/trusted.gpg.d/monetdb.gpg https://www.monetdb.org/downloads/MonetDB-GPG-KEY.gpg 
+
+  apt update 
+  apt install monetdb5-sql=11.33.3 monetdb-client  monetdb5-server=11.33.3 -y
+  
+  apt-get update -y
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -q software-properties-common
+  apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+  
+  apt update && apt-get install unzip
+  
+ 
+%runscript
+
+    exec "$@"
+
+%setup
+
+  #Create a work directory inside the container
+  WORKDIR="$SINGULARITY_ROOTFS/liliane"
+  mkdir -p $WORKDIR
+  mkdir -p $WORKDIR/home/
+
+  if [ ! -x "$WORKDIR" ]; then
+    echo "failed to create tempdir directory..."
+    exit 1
+  fi
+  chmod -R 777 $WORKDIR
+ 
+  exit 0
+

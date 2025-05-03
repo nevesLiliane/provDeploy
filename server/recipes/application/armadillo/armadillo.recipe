@@ -1,0 +1,42 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+%files
+
+%setup
+  # Commands in the %setup section are executed on the host system outside of the container after 
+  # the base OS has been installed
+
+  #Create a work directory inside the container
+  WORKDIR="$SINGULARITY_ROOTFS/liliane"
+  mkdir -p $WORKDIR
+  if [ ! -x "$WORKDIR" ]; then
+    echo "failed to create tempdir directory..."
+    exit 1
+  fi
+ 
+  chmod -R 777 $WORKDIR
+  exit 0
+
+  cp -r dfa-lib-cpp ${SINGULARITY_ROOTFS}/liliane/dfa-lib-cpp
+
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WORKDIR/dfa-lib-cpp/lib
+
+%labels
+  AUTHOR lilianeneves8@gmail.com
+
+%post
+  apt-get update
+  apt-get install liblapack-dev -y
+  apt-get install libblas-dev -y
+  apt-get install libboost-dev -y
+  apt-get install libarmadillo-dev -y
+
+%runscript
+  $WORKDIR/"$@"
+  
+%environment
+
+  APPNAME="liliane"
+  WORKDIR=$SINGULARITY_ROOTFS/$APPNAME
+  export APPNAME WORKDIR

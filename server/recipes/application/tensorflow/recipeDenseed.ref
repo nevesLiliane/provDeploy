@@ -1,0 +1,5 @@
+BootStrap: localimage
+From: denseed.sif
+
+%post 
+	pip install pandas opencv-python==4.6.0.66 matplotlib

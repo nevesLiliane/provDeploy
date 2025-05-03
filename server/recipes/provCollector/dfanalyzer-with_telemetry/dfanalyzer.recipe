@@ -1,0 +1,75 @@
+BootStrap: library
+From: ubuntu:16.04
+
+
+%runscript
+
+  java -jar /home/DfAnalyzer/target/DfAnalyzer-1.0.jar 
+
+%files
+
+   monetdb.list                 /etc/apt/sources.list.d
+   create_tomcat_admin_user.sh  /create_tomcat_admin_user.sh
+   run.sh                       /etc/service/tomcat/run
+   start_dfa.sh                 start_dfa.sh
+   DfAnalyzer                   /home/DfAnalyzer/
+
+%environment
+  
+  export TOMCAT_MAJOR_VERSION=8
+  export TOMCAT_MINOR_VERSION=8.0.11
+  CATALINA_HOME=/tomcat
+  export CATALINA_HOME
+
+  export JAVA_VER=8
+  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+%labels
+
+   AUTHOR lilianeneves8@gmail.com
+
+%post
+
+  apt-get update && \
+  apt-get install -yq --no-install-recommends wget pwgen ca-certificates && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
+  wget -q https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_MINOR_VERSION}/bin/apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz && \
+  wget -qO- https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_MINOR_VERSION}/bin/apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz.md5 | md5sum -c - && \
+  tar zxf apache-tomcat-*.tar.gz && \
+  rm apache-tomcat-*.tar.gz && \
+  mv apache-tomcat* tomcat
+
+  apt -y install wget apt-transport-https
+  wget --output-document=- https://www.monetdb.org/downloads/MonetDB-GPG-KEY | apt-key add - 
+  apt update 
+  apt install monetdb5-sql monetdb-client -y
+
+  chmod +x /*.sh
+  chmod +x /etc/service/tomcat/run
+
+  chmod +x /start_dfa.sh
+  chmod +x /home/DfAnalyzer/restore-DI.sh
+
+  chmod -R 777 /home/DfAnalyzer/monetdb
+
+  mkdir tomcat
+
+  echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" > /etc/apt/sources.list
+
+  apt-get -y update
+
+  #apt-get install -y -q python-software-properties software-properties-common
+
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -q python-software-properties software-properties-common
+  add-apt-repository ppa:openjdk-r/ppa
+  apt-get update 
+
+  apt-get install -y openjdk-8-jdk
+  apt-get clean
+
+  echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> ~/.bashrc
+
+  apt-get clean  
+  #rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

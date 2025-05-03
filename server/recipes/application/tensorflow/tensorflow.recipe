@@ -1,0 +1,51 @@
+Bootstrap: docker
+
+From: ubuntu:18.04
+
+%files
+    dfa-lib-python
+
+%environment
+   
+
+%post
+    apt-get update
+
+    apt install python3-pip -y --fix-missing
+    #apt-get update
+
+    #apt-get install curl -y
+    #curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    #python get-pip.py
+
+    pip3 install tensorflow 
+    pip3 install pytest==4.5.0 pytest-arraydiff==0.3  
+    cd $SINGULARITY_ROOTFS/liliane/dfa-lib-python
+    python3 setup.py install
+
+    pip3 install kafka-python
+    pip3 install matplotlib
+    pip3 install sklearn
+    pip3 install tflearn
+
+%runscript
+
+    #conda init
+    #exec $SHELL
+    #conda activate myenv
+    #echo "$@"
+    exec "$@"
+
+%setup
+  WORKDIR="$SINGULARITY_ROOTFS/liliane"
+  mkdir -p $WORKDIR
+  if [ ! -x "$WORKDIR" ]; then
+    echo "failed to create tempdir directory..."
+    exit 1
+  fi
+
+  cp -r dfa-lib-python ${SINGULARITY_ROOTFS}/liliane/dfa-lib-python
+
+  cp inicio.sh $SINGULARITY_ROOTFS/liliane/inicio.sh
+
+
