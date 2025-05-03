@@ -1,6 +1,6 @@
-# ProvDeploy
+# ProvDeploy [![DOI](https://zenodo.org/badge/977216424.svg)](https://doi.org/10.5281/zenodo.15334286)
 
-[![DOI](https://zenodo.org/badge/977216424.svg)](https://doi.org/10.5281/zenodo.15334286)
+
 Hello, thanks for visiting ProvDeploy repository
 
 ProvDeploy is a tool to ease deployment and provenance data capture through containers allowing multiple containerization strategies.
