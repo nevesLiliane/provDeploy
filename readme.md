@@ -12,8 +12,7 @@ ProvDeploy is a tool to ease deployment and provenance data capture through cont
 Please clone ProvDeploy in your local machine by running the following command:
 
 ```
-git clone https://lilianeKunstmann@bitbucket.org/lilianeKunstmann/provdeploy.git
- 
+git clone https://github.com/nevesLiliane/provDeploy.git
 ```
 
 
