@@ -7,7 +7,7 @@ parser.add_argument('-s', dest='run', help='run application with default provena
 parser.add_argument('-n', dest='new', help='enter new configuration/provCollector if you want to run in a different machine, provide a \
 	server.json file with the server information')
 parser.add_argument('-a', dest='access', help='access database')
-parser.add_argument('-w', dest='wrap', help='wrap last execution')
+parser.add_argument('-w', dest='wrap', help='wrap execution, you have to provide the workflow name ')
 args = parser.parse_args()
 
 if args.list is True :

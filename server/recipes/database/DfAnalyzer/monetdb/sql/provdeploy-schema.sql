@@ -198,13 +198,13 @@ create table start_command(
 
 
 
-create table network(
-	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
-	"net_port"	VARCHAR(155),
-	"image_id"	INTEGER,
-	PRIMARY KEY ("id"),
-	FOREIGN KEY ("image_id") REFERENCES container_image("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
+--create table network(
+--	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
+--	"net_port"	VARCHAR(155),
+--	"image_id"	INTEGER,
+--	PRIMARY KEY ("id"),
+--	FOREIGN KEY ("image_id") REFERENCES container_image("id") ON DELETE CASCADE ON UPDATE CASCADE
+--);
 
 create table rootFS(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "root_id_seq"	NOT NULL,
@@ -219,6 +219,33 @@ create table rootFS(
 	PRIMARY KEY ("id"),
 	FOREIGN KEY ("image_id") REFERENCES container_image("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+create table layers(
+	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
+	"value"	VARCHAR(155),
+	"rfs_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("rfs_id") REFERENCES rootFS("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+create table graph_driver(
+	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
+	"name"	VARCHAR(155),
+	"rfs_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("rfs_id") REFERENCES rootFS("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+create table data(
+	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
+	"name"	VARCHAR(155),
+	"value"	VARCHAR(155),
+	"gd_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("gd_id") REFERENCES graph_driver("gd_id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
 
 create table software(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "software_id_seq" NOT NULL,
@@ -248,27 +275,46 @@ create table IO_stream(
 create table env(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "env_id_seq" NOT NULL,
 	"value"		VARCHAR(155),
-	PRIMARY KEY ("id")
+	"config_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table entryPoint(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "entrypoint_id_seq" NOT NULL,
 	"value"		VARCHAR(155),
-	PRIMARY KEY ("id")
+	"key"		VARCHAR(155),
+	"config_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table cmd(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "cmd_id_seq" NOT NULL,
 	"value"		VARCHAR(155),
-	PRIMARY KEY ("id")
+	"key"		VARCHAR(155),
+	"config_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table label(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "label_id_seq" NOT NULL,
 	"value"		VARCHAR(155),
-	PRIMARY KEY ("id")
+	"key"		VARCHAR(155),
+	"config_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+create table net_ports(
+	"id"		INTEGER DEFAULT NEXT VALUE FOR "network_id_seq" NOT NULL,
+	"net_port"	VARCHAR(155),
+	"key"	VARCHAR(155),
+	"config_id" INTEGER,
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 create table configuration(
 	"id"			INTEGER DEFAULT NEXT VALUE FOR "config_id_seq" NOT NULL,
 	"user"			VARCHAR(155),
@@ -276,13 +322,10 @@ create table configuration(
 	"EntryPoint_id"	INTEGER,
 	"cmd_id"		INTEGER,
 	"label_id"		INTEGER,
+	"net_ports_id"	INTEGER,
 	"image_id"		INTEGER,
 	PRIMARY KEY ("id"),
-	FOREIGN KEY ("image_id") REFERENCES image("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY ("env_id") REFERENCES env("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY ("EntryPoint_id") REFERENCES entrypoint("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY ("cmd_id") REFERENCES cmd("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY ("label_id") REFERENCES label("id") ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY ("image_id") REFERENCES image("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 commit;
