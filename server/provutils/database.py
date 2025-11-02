@@ -214,7 +214,7 @@ def get_recipe_images_by_execution_workflow_name(key):
     query = '''SELECT config_file, image_path FROM container c join container_image ci on c.image_id=ci.id where 
                     execution_id=(SELECT max(e.id) FROM execution e join workflow_execution we on e.id = we.exec_id 
                     join workflow w on we.wf_id=w.id where workflow='{}');'''.format(key)
-
+    cursor.execute(query)
     for n in cursor.fetchall():
         # recipe, image_path = n
         configs.append(n)
