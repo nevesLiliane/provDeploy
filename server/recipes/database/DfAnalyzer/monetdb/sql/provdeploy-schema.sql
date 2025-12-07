@@ -242,7 +242,7 @@ create table data(
 	"value"	VARCHAR(155),
 	"gd_id" INTEGER,
 	PRIMARY KEY ("id"),
-	FOREIGN KEY ("gd_id") REFERENCES graph_driver("gd_id") ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY ("gd_id") REFERENCES graph_driver("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -269,6 +269,19 @@ create table IO_stream(
 	"tty"			VARCHAR(155),
 	"open_std_in"		VARCHAR(155),
 	"std_in_once"		VARCHAR(155),
+	PRIMARY KEY ("id"),
+	FOREIGN KEY ("image_id") REFERENCES container_image("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+create table configuration(
+	"id"			INTEGER DEFAULT NEXT VALUE FOR "config_id_seq" NOT NULL,
+	"user"			VARCHAR(155),
+	"env_id"		INTEGER,
+	"EntryPoint_id"	INTEGER,
+	"cmd_id"		INTEGER,
+	"label_id"		INTEGER,
+	"net_ports_id"	INTEGER,
+	"image_id"		INTEGER,
 	PRIMARY KEY ("id"),
 	FOREIGN KEY ("image_id") REFERENCES container_image("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -315,18 +328,7 @@ create table net_ports(
 	PRIMARY KEY ("id"),
 	FOREIGN KEY ("config_id") REFERENCES configuration("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-create table configuration(
-	"id"			INTEGER DEFAULT NEXT VALUE FOR "config_id_seq" NOT NULL,
-	"user"			VARCHAR(155),
-	"env_id"		INTEGER,
-	"EntryPoint_id"	INTEGER,
-	"cmd_id"		INTEGER,
-	"label_id"		INTEGER,
-	"net_ports_id"	INTEGER,
-	"image_id"		INTEGER,
-	PRIMARY KEY ("id"),
-	FOREIGN KEY ("image_id") REFERENCES image("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
+
 
 commit;
 
