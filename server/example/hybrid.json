@@ -1,0 +1,7 @@
+{"workflow" : "example-df",
+"act": [{"code":["script1.py","script2.py"],"image": <catalog_image_flag>,"exec_command":<script_1_execution_command>},
+	...
+	{"code": ["script(n-m+1).py" ,...,"scriptn.py"],"image": <catalog_image_flag>,"exec_command": <script_n-m+1_execution_command>}],
+"path":<workflow_directory>,
+"machine" : <execution_environment>
+}

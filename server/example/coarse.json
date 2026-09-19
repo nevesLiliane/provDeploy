@@ -1,4 +1,4 @@
-{"workflow" : "sciphy-df",
+{"workflow" : "alexnet-liliane-1",
 "act": [{"code":"auto_instrumented.py","exec_command":" python auto_instrumented.py"}],
 "path": "example/",
 "exec_command":"python3",
